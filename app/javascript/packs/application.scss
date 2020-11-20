@@ -1,0 +1,17 @@
+table {
+  tr {
+    textarea {
+      width: 95%;
+    }
+  }
+}
+
+
+.paginate-area {
+  position: relative;
+  margin-top: 20px;
+  .pagination{
+    width: max-content;
+    margin: 0px auto;
+  }
+}

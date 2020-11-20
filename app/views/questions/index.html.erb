@@ -1,0 +1,82 @@
+<h4>All questions</h4>
+
+<table style="width:100%" class="main-table" cellspacing="2" border="1" cellpadding="5">
+  <tr class="head">
+    <th>Question ru</th>
+    <th>Question en</th>
+
+    <th>Answers ru</th>
+    <th>Answers en</th>
+    <th>Links</th>
+  </tr>
+  <% @questions.each do |question| %>
+    <tr class="question">
+      <%= form_with model: question, url: question_path(question), local: true do |f| %>
+        <td>
+          <%= f.text_area :title,
+                           placeholder: "Text question ru",
+                           class: 'form-control',
+          rows: 12 %>
+        </td>
+        <td>
+          <%= f.text_area :title_en,
+                          placeholder: "Text question en",
+                          class: 'form-control',
+                          rows: 12 %>
+        </td>
+
+
+        <td>
+          true:<%= f.text_area :answer,
+                          placeholder: "",
+                          class: 'form-control',
+                          rows: 2 %><br/>
+
+          wrong 1:<%= f.text_area :answer_wrong_1_ru,
+                                  placeholder: "",
+                                  class: 'form-control',
+                                  rows: 1 %><br/>
+
+          wrong 2:<%= f.text_area :answer_wrong_2_ru,
+                                  placeholder: "",
+                                  class: 'form-control',
+                                  rows: 1 %><br/>
+          wrong 3:<%= f.text_area :answer_wrong_3_ru,
+                                  placeholder: "",
+                                  class: 'form-control',
+                                  rows: 1 %>
+
+
+        </td>
+        <td>
+          true:<%= f.text_area :answer_en,
+                               placeholder: "",
+                               class: 'form-control',
+                               rows: 2 %><br/>
+
+          wrong 1:<%= f.text_area :answer_wrong_1_en,
+                                  placeholder: "",
+                                  class: 'form-control',
+                                  rows: 1 %><br/>
+
+          wrong 2:<%= f.text_area :answer_wrong_2_en,
+                                  placeholder: "",
+                                  class: 'form-control',
+                                  rows: 1 %><br/>
+          wrong 3:<%= f.text_area :answer_wrong_3_en,
+                                  placeholder: "",
+                                  class: 'form-control',
+                                  rows: 1 %>
+        </td>
+        <td>
+          <%= f.submit 'Save' %><br/>
+          <%= link_to 'Destroy', delete_question_path(question) %>
+        </td>
+      <% end %>
+    </tr>
+  <% end %>
+</table>
+
+<div class="paginate-area">
+  <%= will_paginate @questions %>
+</div>

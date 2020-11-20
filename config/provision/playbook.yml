@@ -1,0 +1,149 @@
+---
+- hosts: 'all'
+  remote_user: 'ubuntu'
+  gather_facts: no
+
+
+  pre_tasks:
+    - name: 'install python2'
+      raw: sudo apt-get -y install python-simplejson
+
+  vars:
+    ruby_version: '2.7.1'
+    user: 'deploy1'
+    user_password: '12345'
+    home: '/home/{{ user }}'
+    rbenv_root: '{{ home }}/.rbenv'
+    app_name: 'educational'
+    application: '{{ home }}/applications/{{ app_name }}'
+    custom_ssh_port: 220
+
+  tasks:
+    ### Install packages ###
+    - name: 'apt | update'
+      action: 'apt update_cache=yes'
+
+    - name: 'apt | install dependencies'
+      action: 'apt pkg={{ item }}'
+      with_items:
+        - 'build-essential'
+        - 'libssl-dev'
+        - 'libyaml-dev'
+        - 'libreadline6-dev'
+        - 'zlib1g-dev'
+        - 'libcurl4-openssl-dev'
+        - 'git'
+        - 'nginx'
+        - 'postgresql'
+        - 'postgresql-contrib'
+        - 'libpq-dev'
+        - 'imagemagick'
+        - 'libmagickwand-dev'
+        - 'nodejs'
+        - 'htop'
+
+    ### Create an account with ssh keys ###
+    - name: 'account | create'
+      user: 'name={{ user }} shell=/bin/bash password={{ user_password }}'
+
+    - name: 'account | copy authorized keys'
+      shell: 'mkdir -p {{ home }}/.ssh -m 700 && cp /root/.ssh/authorized_keys {{ home }}/.ssh && chown -R {{ user }}:{{ user }} {{ home }}/.ssh'
+
+    - name: 'account | copy ssh private key'
+      copy: 'src=keys/id_rsa dest={{ home }}/.ssh/id_rsa owner={{ user }} group={{ user }} mode=0600'
+
+    - name: 'account | copy ssh public key'
+      copy: 'src=keys/id_rsa.pub dest={{ home }}/.ssh/id_rsa.pub owner={{ user }} group={{ user }} mode=0644'
+
+    ### Install ruby ###
+    - name: 'rbenv | clone repo'
+      git: 'repo=git://github.com/sstephenson/rbenv.git dest={{ rbenv_root }} accept_hostkey=yes'
+
+    - name: 'rbenv | check ruby-build installed'
+      command: 'test -x {{ rbenv_root }}/plugins/ruby-build'
+      register: 'plugin_installed'
+      ignore_errors: yes
+      become: yes
+
+    - name: 'rbenv | add bin to path'
+      shell: echo 'export PATH="$HOME/.rbenv/bin:$PATH"' >> {{ home }}/.bashrc
+      become: yes
+
+    - name: 'rbenv | init'
+      shell: echo 'eval "$(rbenv init -)"' >> {{ home }}/.bashrc
+      become: yes
+
+    - name: 'rbenv | clone ruby-build repo'
+      git: 'repo=git://github.com/sstephenson/ruby-build.git dest={{ rbenv_root }}/plugins/ruby-build accept_hostkey=yes'
+      become: yes
+
+    - name: 'rbenv | install ruby {{ ruby_version }}'
+      shell: 'RBENV_ROOT={{ rbenv_root }} PATH="$RBENV_ROOT/bin:$PATH" rbenv install {{ ruby_version }}'
+      become: yes
+
+    - name: 'rbenv | set global ruby {{ ruby_version }}'
+      shell: 'RBENV_ROOT={{ rbenv_root }} PATH="$RBENV_ROOT/bin:$PATH" rbenv global {{ ruby_version }}'
+      become: yes
+
+    - name: 'rbenv | rehash'
+      shell: 'RBENV_ROOT={{ rbenv_root }} PATH="$RBENV_ROOT/bin:$PATH" rbenv rehash'
+      become: yes
+
+    - name: 'rbenv | create .gemrc'
+      lineinfile: 'dest={{ home }}/.gemrc owner={{ user }} group={{ user }} mode=0644 line="gem: --no-ri --no-rdoc" create=yes'
+      become: yes
+
+    - name: 'ruby | install bundler'
+      shell: 'RBENV_ROOT={{ rbenv_root }} PATH="$RBENV_ROOT/bin:$PATH" rbenv exec gem install bundler'
+      become: yes
+
+    - name: 'rbenv | change owner'
+      shell: 'chown -R {{ user }}:{{ user }} {{ rbenv_root }}'
+      become: yes
+
+    ### install curl
+    - name: 'install curl'
+      shell: 'apt install curl'
+
+    ### yarn
+    - name: 'add yarn dependencies'
+      shell: 'curl -sS https://dl.yarnpkg.com/debian/pubkey.gpg | apt-key add -'
+
+    - name: 'update sources for yarn'
+      shell: 'echo "deb https://dl.yarnpkg.com/debian/ stable main" | tee /etc/apt/sources.list.d/yarn.list'
+
+    - name: 'install yarn'
+      shell: ' apt-get update && apt-get install yarn'
+
+    - name: 'postgresql | restart service'
+      service: name=postgresql state=restarted
+
+    - name: 'postgresql | create shared directory'
+      shell: 'mkdir -p {{ application }}/shared/config -m 775 && chown -R {{ user }}:{{ user }} {{ home }}/applications'
+
+    - name: 'postgresql | copy database.yml'
+      template: 'src=configs/database.yml dest={{ application }}/shared/config/database.yml owner={{ user }} group={{ user }} mode=0644'
+
+    ### Setup nginx ###
+    - name: 'nginx | check config'
+      command: 'test -f /etc/nginx/sites-enabled/{{ app_name }}.conf'
+      register: 'nginx_config_copied'
+      ignore_errors: yes
+
+    - name: 'nginx | createdir'
+      shell: 'rm /etc/nginx/sites-enabled/default; mkdir -p etc/nginx/sites-enabled/'
+
+    - name: 'nginx | copy config'
+      template: 'src=configs/nginx.conf dest=/etc/nginx/sites-enabled/{{ app_name }}.conf owner=root group=root mode=0644'
+
+    - name: 'nginx | restart service'
+      service: name=nginx state=restarted
+
+      ### Setup puma ###
+    - name: 'puma | check config'
+      command: 'test -f {{ application }}/shared/config/puma.rb'
+      register: 'puma_config_copied'
+      ignore_errors: yes
+
+    - name: 'copy puma server setting | copy puma.rb'
+      template: 'src=configs/puma.rb dest={{ application }}/shared/config/puma.rb owner={{ user }} group={{ user }} mode=0644'
