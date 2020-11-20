@@ -1,8 +1,7 @@
 ---
 - hosts: 'all'
-  remote_user: 'ubuntu'
+  remote_user: 'root'
   gather_facts: no
-
 
   pre_tasks:
     - name: 'install python2'
@@ -10,11 +9,11 @@
 
   vars:
     ruby_version: '2.7.1'
-    user: 'deploy1'
+    user: 'deploy'
     user_password: '12345'
     home: '/home/{{ user }}'
     rbenv_root: '{{ home }}/.rbenv'
-    app_name: 'educational'
+    app_name: 'parser_app'
     application: '{{ home }}/applications/{{ app_name }}'
     custom_ssh_port: 220
 
@@ -115,6 +114,15 @@
     - name: 'install yarn'
       shell: ' apt-get update && apt-get install yarn'
 
+    ### Manage database ###
+    - name: 'postgresql | check user'
+      shell: 'psql -U postgres -c "\copyright"'
+      register: 'postgres_login'
+      ignore_errors: yes
+
+    - name: 'postgresql | set auth type'
+      copy: 'src=configs/pg_hba.conf dest=/etc/postgresql/10/main/pg_hba.conf owner=postgres group=postgres mode=0644'
+
     - name: 'postgresql | restart service'
       service: name=postgresql state=restarted
 
@@ -123,6 +131,14 @@
 
     - name: 'postgresql | copy database.yml'
       template: 'src=configs/database.yml dest={{ application }}/shared/config/database.yml owner={{ user }} group={{ user }} mode=0644'
+
+      # возможно нужно удалить
+    #  - name: 'postgresql | copy settings.yml'
+    #    template: 'src=configs/settings.yml dest={{ application }}/shared/config/settings.yml owner={{ user }} group={{ user }} mode=0644'
+
+    - name: 'postgresql | create database'
+      shell: 'createdb -U postgres -O postgres -E UTF8 -l en_US.UTF-8 {{ app_name }}_production'
+      ignore_errors: yes
 
     ### Setup nginx ###
     - name: 'nginx | check config'
