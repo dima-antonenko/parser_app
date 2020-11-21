@@ -16,6 +16,10 @@ class QuestionsController < ApplicationController
     redirect_back(fallback_location: root_path)
   end
 
+  def test
+
+  end
+
   private
 
   def get_question

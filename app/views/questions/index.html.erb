@@ -80,3 +80,6 @@
 <div class="paginate-area">
   <%= will_paginate @questions %>
 </div>
+
+<p>Active: <%= Question.active.size %></p>
+<p>Deleted: <%= Question.deleted.size %></p>
