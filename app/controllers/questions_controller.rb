@@ -8,12 +8,16 @@ class QuestionsController < ApplicationController
 
   def update
     @question.update(question_params)
-    redirect_back(fallback_location: root_path)
+    redirect_back(fallback_location: '/qa/wededit/all')
   end
 
   def delete
     @question.update_attribute(:deteled, true)
-    redirect_back(fallback_location: root_path)
+    redirect_back(fallback_location: `/qa/wededit/all`)
+  end
+
+  def show
+    redirect_to '/qa/wededit/all'
   end
 
   def test
