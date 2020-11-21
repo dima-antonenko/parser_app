@@ -1,4 +1,4 @@
-ip = '185.119.57.244'
+ip = '185.104.114.243'
 
 server ip, user: 'deploy', roles: %w(web app db)
 
