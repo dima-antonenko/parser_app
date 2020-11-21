@@ -1,5 +1,6 @@
-<h4>All questions</h4>
-<%= link_to 'Clear questions', clear_path  %>
+<h4>Clear questions</h4>
+<%= link_to 'Back', home_url  %>
+
 <table style="width:100%" class="main-table" cellspacing="2" border="1" cellpadding="5">
   <tr class="head">
     <th>Question ru</th>
@@ -14,9 +15,9 @@
       <%= form_with model: question, url: question_path(question), local: true do |f| %>
         <td>
           <%= f.text_area :title,
-                           placeholder: "Text question ru",
-                           class: 'form-control',
-          rows: 12 %>
+                          placeholder: "Text question ru",
+                          class: 'form-control',
+                          rows: 12 %>
         </td>
         <td>
           <%= f.text_area :title_en,
@@ -28,9 +29,9 @@
 
         <td>
           true:<%= f.text_area :answer,
-                          placeholder: "",
-                          class: 'form-control',
-                          rows: 2 %><br/>
+                               placeholder: "",
+                               class: 'form-control',
+                               rows: 2 %><br/>
 
           wrong 1:<%= f.text_area :answer_wrong_1_ru,
                                   placeholder: "",

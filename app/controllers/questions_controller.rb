@@ -6,18 +6,22 @@ class QuestionsController < ApplicationController
     @questions = Question.active.paginate(page: params[:page], per_page: 15)
   end
 
+  def clear
+    @questions = Question.clear.paginate(page: params[:page], per_page: 15)
+  end
+
   def update
     @question.update(question_params)
-    redirect_back(fallback_location: '/qa/wededit/all')
+    redirect_back(fallback_location: home_path)
   end
 
   def delete
     @question.update_attribute(:deteled, true)
-    redirect_back(fallback_location: `/qa/wededit/all`)
+    redirect_back(fallback_location: home_path)
   end
 
   def show
-    redirect_to '/qa/wededit/all'
+    redirect_to home_path
   end
 
   def test
