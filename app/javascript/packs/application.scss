@@ -1,6 +1,8 @@
 table {
   tr {
-
+    textarea {
+      width: 95%;
+    }
   }
 }
 
@@ -12,13 +14,4 @@ table {
     width: max-content;
     margin: 0px auto;
   }
-}
-
-textarea {
-  width: 95% !important;
-  float: left;
-  -webkit-box-sizing: border-box;
-  -moz-box-sizing: border-box;
-  box-sizing: border-box;
-  display: block;
 }
