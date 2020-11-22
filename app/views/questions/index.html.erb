@@ -1,5 +1,15 @@
 <h4>All questions</h4>
 <%= link_to 'Clear questions', clear_path  %>
+
+
+<% if flash[:errors] %>
+  <ol class="breadcrumb model-errors">
+    <% flash[:errors].each do |error| %>
+      <p class="model-error"><%= error %></p>
+    <% end %>
+  </ol>
+<% end %>
+
 <table style="width:100%" class="main-table" cellspacing="2" border="1" cellpadding="5">
   <tr class="head">
     <th>Question ru</th>
@@ -34,16 +44,17 @@
 
           wrong 1:<%= f.text_area :answer_wrong_1_ru,
                                   placeholder: "",
-                                  class: 'form-control',
+                                  class: "form-control field-#{ !!question.answer_wrong_1_ru }",
+
                                   rows: 1 %><br/>
 
           wrong 2:<%= f.text_area :answer_wrong_2_ru,
                                   placeholder: "",
-                                  class: 'form-control',
+                                  class: "form-control field-#{ !!question.answer_wrong_2_ru }",
                                   rows: 1 %><br/>
           wrong 3:<%= f.text_area :answer_wrong_3_ru,
                                   placeholder: "",
-                                  class: 'form-control',
+                                  class: "form-control field-#{ !!question.answer_wrong_2_ru }",
                                   rows: 1 %>
 
 
@@ -56,7 +67,7 @@
 
           wrong 1:<%= f.text_area :answer_wrong_1_en,
                                   placeholder: "",
-                                  class: 'form-control',
+                                  class: "form-control",
                                   rows: 1 %><br/>
 
           wrong 2:<%= f.text_area :answer_wrong_2_en,

@@ -11,7 +11,8 @@ class QuestionsController < ApplicationController
   end
 
   def update
-    @question.update(question_params)
+    @question.assign_attributes(question_params)
+    @question.save ? flash[:success] = "Запись обновлена" : flash[:errors] = @question.errors.full_messages
     redirect_back(fallback_location: home_path)
   end
 
