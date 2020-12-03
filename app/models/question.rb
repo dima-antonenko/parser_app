@@ -6,7 +6,8 @@ class Question < ApplicationRecord
   # }
 
   scope :active, -> {
-    where.not("answer_wrong_1_ru IS NOT NULL AND answer_wrong_2_ru IS NOT NULL AND answer_wrong_3_ru IS NOT NULL").order('id DESC')
+    where.not("answer_wrong_1_ru IS NOT NULL AND answer_wrong_2_ru IS NOT NULL AND answer_wrong_3_ru IS NOT NULL")
+         .where(deteled: false).order('id DESC')
     }
 
 
