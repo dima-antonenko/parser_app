@@ -22,6 +22,7 @@
   <% @questions.each do |question| %>
     <tr class="question">
       <%= form_with model: question, url: question_path(question), local: true do |f| %>
+        <!-- <%= question.attributes.to_s.html_safe %> > -->
         <td>
           <%= f.text_area :title,
                            placeholder: "Text question ru",
