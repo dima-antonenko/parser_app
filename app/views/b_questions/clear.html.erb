@@ -71,10 +71,10 @@
         </td>
 
         <td>
-          <%= f.check_box :answer %>
+          <%= f.check_box :answer, class: 'center' %>
         </td>
         <td>
-          <%= f.submit 'Save' %><br/>
+          <%= f.submit 'Save', class: 'center' %><br/>
           <%= link_to 'Destroy', delete_b_question_path(question) %>
         </td>
       <% end %>
