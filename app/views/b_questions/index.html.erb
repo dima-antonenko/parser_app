@@ -1,0 +1,92 @@
+<h4>All binary questions</h4>
+<%= link_to 'Clear questions', b_clear_path  %>
+<hr>
+<h3>Add binary question</h3>
+<table style="width:100%" class="main-table" cellspacing="2" border="1" cellpadding="5">
+  <tr class="head">
+    <th>Question ru</th>
+    <th>Question en</th>
+
+    <th>Answer</th>
+    <th>Links</th>
+  </tr>
+    <tr class="question">
+
+      <%= form_with model: BQuestion.new, url: b_questions_path, local: true do |f| %>
+        <td>
+          <%= f.text_area :title_ru,
+                          placeholder: "Text question ru",
+                          class: 'form-control',
+                          rows: 12 %>
+        </td>
+        <td>
+          <%= f.text_area :title_en,
+                          placeholder: "Text question en",
+                          class: 'form-control',
+                          rows: 12 %>
+        </td>
+
+        <td>
+          <%= f.check_box :answer, class: 'center' %>
+        </td>
+        <td>
+          <%= f.submit 'Save', class: 'center' %><br/>
+        </td>
+      <% end %>
+    </tr>
+</table>
+<hr/>
+
+<% if flash[:errors] %>
+  <ol class="breadcrumb model-errors">
+    <% flash[:errors].each do |error| %>
+      <p class="model-error"><%= error %></p>
+    <% end %>
+  </ol>
+<% end %>
+
+<h3>List binary questions</h3>
+<table style="width:100%" class="main-table" cellspacing="2" border="1" cellpadding="5">
+  <tr class="head">
+    <th>Question ru</th>
+    <th>Question en</th>
+
+    <th>Answer</th>
+    <th>Links</th>
+  </tr>
+  <% @questions.each do |question| %>
+    <tr class="question">
+      <%= form_with model: question, url: b_question_path(question), local: true do |f| %>
+         <!-- <%= question.attributes.to_s.html_safe %> -->
+        <td>
+          <%= f.text_area :title_ru,
+                          placeholder: "Text question ru",
+                          class: 'form-control',
+                          rows: 12 %>
+        </td>
+        <td>
+          <%= f.text_area :title_en,
+                          placeholder: "Text question en",
+                          class: 'form-control',
+                          rows: 12 %>
+        </td>
+
+        <td>
+          <%= f.check_box :answer, class: 'center' %>
+        </td>
+        <td>
+          <%= f.submit 'Save', class: 'center' %><br/>
+          <%= link_to 'Destroy', delete_b_question_path(question), class: 'center' %>
+        </td>
+      <% end %>
+    </tr>
+  <% end %>
+</table>
+
+<div class="paginate-area">
+  <%= will_paginate @questions %>
+</div>
+
+<p>Active: <%= BQuestion.active.size %></p>
+<p>Deleted: <%= BQuestion.deleted.size %></p>
+<p>Clear: <%= BQuestion.clear.size %></p>
