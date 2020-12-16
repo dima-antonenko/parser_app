@@ -7,7 +7,7 @@
     <th>Question ru</th>
     <th>Question en</th>
 
-    <th>Answer</th>
+    <th>Correct</th>
     <th>Links</th>
   </tr>
   <tr class="question">
@@ -26,7 +26,7 @@
       </td>
 
       <td>
-        <%= f.check_box :answer, class: 'center' %>
+        <%= f.check_box :correct, class: 'center' %>
       </td>
       <td>
         <%= f.submit 'Save', class: 'center' %><br/>
@@ -50,7 +50,7 @@
     <th>Question ru</th>
     <th>Question en</th>
 
-    <th>Answer</th>
+    <th>Correct</th>
     <th>Links</th>
   </tr>
   <% @questions.each do |question| %>
@@ -71,7 +71,7 @@
         </td>
 
         <td>
-          <%= f.check_box :answer, class: 'center' %>
+          <%= f.check_box :correct, class: 'center' %>
         </td>
         <td>
           <%= f.submit 'Save', class: 'center' %><br/>

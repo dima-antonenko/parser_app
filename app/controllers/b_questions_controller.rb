@@ -41,6 +41,6 @@ class BQuestionsController < ApplicationController
   end
 
   def question_params
-    params.require(:b_question).permit(:title_ru, :title_en, :answer)
+    params.require(:b_question).permit(:title_ru, :title_en, :correct)
   end
 end

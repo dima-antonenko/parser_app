@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_12_14_150047) do
+ActiveRecord::Schema.define(version: 2020_12_16_143151) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -18,9 +18,8 @@ ActiveRecord::Schema.define(version: 2020_12_14_150047) do
   create_table "b_questions", force: :cascade do |t|
     t.string "title_ru"
     t.string "title_en"
-    t.boolean "answer", default: false, null: false
     t.boolean "deleted", default: false, null: false
-    t.index ["answer"], name: "index_b_questions_on_answer"
+    t.boolean "correct", default: false, null: false
     t.index ["deleted"], name: "index_b_questions_on_deleted"
     t.index ["title_en"], name: "index_b_questions_on_title_en"
     t.index ["title_ru"], name: "index_b_questions_on_title_ru"
